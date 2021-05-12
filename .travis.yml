@@ -2,3 +2,8 @@ os: linux
 
 language: python
 python: "3.9"
+
+#env:
+# - DJANGO_VERSION=3.2.2
+
+script: make test
