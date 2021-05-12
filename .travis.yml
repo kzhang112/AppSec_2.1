@@ -4,6 +4,9 @@ language: python
 python: "3.9"
 
 #env:
-# - DJANGO_VERSION=3.2.2
+#  - DJANGO_VERSION=3.2.2
 
-script: make test
+#install:
+#  - pip install -q Django==$DJANGO_VERSION
+
+script: python test.py
