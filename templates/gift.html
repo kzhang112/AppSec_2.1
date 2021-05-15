@@ -56,8 +56,17 @@
           <div class="row align-items-center justify-content-center">
             <div class="col-md-7 mx-auto text-center" data-aos="fade-up">
               <h1>{{ prod_name }}</h1>
+<!--
+KZ: </changes>
+Here we fix both the intial XSS attack, and the CSRF attack that follows.
+Specifically, we removed/deleted ("|safe"), which is the safe tag.
+-->              
             {% if director is not None %}
-              <p>Endorsed by {{director|safe}}!</p>
+              <p>Endorsed by {{director}}!</p>
+<!--
+KZ: </changes>
+--> 
+
             {% else %}
               <p> For all your card buying needs! </p>
             {% endif %}

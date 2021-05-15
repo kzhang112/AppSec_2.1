@@ -1,4 +1,8 @@
 import json
+
+#KZ: Adding in encryption of passwords using crypto library
+from django_cryptography.fields import encrypt
+
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from LegacySite.models import User, Product, Card
@@ -182,11 +186,15 @@ def use_card_view(request):
         # check if we know about card.
         # KG: Where is this data coming from? RAW SQL usage with unkown
         # KG: data seems dangerous.
+#KZ: You sure are right about this - wonder what someone could do?
         print(card_data.strip())
         signature = json.loads(card_data)['records'][0]['signature']
         # signatures should be pretty unique, right?
-        card_query = Card.objects.raw('select id from LegacySite_card where data = \'%s\'' % signature)
-        user_cards = Card.objects.raw('select id, count(*) as count from LegacySite_card where LegacySite_card.user_id = %s' % str(request.user.id))
+#KZ: Remove the vulnerable card_query  
+        # card_query = Card.objects.raw('select id from LegacySite_card where data = \'%s\'' % signature)
+#KZ: SQL fix, altering signature value vulnerability and potential for UNION attack, remove "\'%s\'' % signature"       
+        card_query = Card.objects.filter(data = signature.encode())
+        user_cards = Card.objects.raw('select id, count(*) as count from LegacySite_card where LegacySite_card.user_id = %s' % str(request.user.id))      
         card_query_string = ""
         for thing in card_query:
             # print cards as strings
@@ -197,7 +205,8 @@ def use_card_view(request):
                 card_file_path = f'/tmp/{card_fname}_{request.user.id}_{user_cards[0].count + 1}.gftcrd'
             else:
                 card_file_path = f'/tmp/newcard_{request.user.id}_{user_cards[0].count + 1}.gftcrd'
-            fp = open(card_file_path, 'w')
+#KZ: Added in 'b' to 'wb' - sanitary           
+            fp = open(card_file_path, 'wb')
             fp.write(card_data)
             fp.close()
             card = Card(data=card_data, fp=card_file_path, user=request.user, used=True)

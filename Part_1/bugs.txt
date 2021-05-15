@@ -1,0 +1,41 @@
+#A text file, bugs.txt explaining the bug triggered by each of your attacks, and describing any other vulnerabilities or broken functionalities you came across. There are more than the bugs mentioned [below].
+	
+Please see below descriptions. They are formatted in two part answers: Bug and Descriptions. Fixes are detailed in the end of descriptions.
+
+#Attack 1. One attack, that exploits a XSS (cross-site scripting) vulnerability.
+
+Bug: Identifies a safe string ("director") in gift.html, allowing XSS attacks
+
+Description: In our XSS attack, we take advantage of the fact that we can inject HTML into a GET Request. If we utilize a script as part of the director, we can engage in an XSS attack. We utilize curl within the .sh file in order to run a very small script. Specifically, we target the file views.py located in the LegacySite folder. The "gift" is referencing the gift_card_view function. Our goal is to have the target browser session run a script with our payload. In the XSS attack, we utilize the unencoded data to the browser, allowing us to inject scripts or processes. In order to patch this vulnerability, we located the issue at Line 60-62 of gift.html - if we take away the "safe tag," we are able to trigger Django to automatically check the variable against API.
+
+#Attack 2. One attack that allows you to buy a force another user to gift a gift card to your account without their knowledge.
+
+Bug: Gift form does not validate crsf, post requests go unchallenged
+
+Description: To force a user to gift a gift card, we utilize a Cross-Site Request Forgery (CRSF) based attack, which will force the target to execute code against their will. In this case, we will be taking advantage of sending a POST message to the webpage. For the CRSF attack, we target the gift section of the Legacy Site (sepcifically views.gift_card_view). Our goal is that by using an HTML file with the "form" section included as part of the code, we post a request to the target website, while masked by a normal HTML file. We forge the POST request and create a value for a gift card ($5000) to give to our account - this creates a dangerous precedent where someone can just generate valuable gift cards. To fix this, we need to patch the XSS vulnerability in the code - this is accomplished by removing the safe tag in Attack #1. 
+
+#Attack 3. One attack that allows you to obtain the salted password for a user given their username. The database should contain a user named ``admin.''
+
+Bug: Views.py does not handle signature values well - we utilize a union attack to force the system to reveal the admin password (which should be securely stored, but more on that in part 3).
+
+Description: Analyzing "extras.py" within the LegacySite folder, we can identify the fields that are key to reading gift cards. We can identify the fields "merchant_id", "customer_id", "total_value", "records" as key to the operation of the gift card reader. Our target is the gift card reader ourselves, and we do this through an injection attack. With this, we can attempt to exploit views.py, as the program queries a signature. By including these SQL injection commands using a "giftcard" (our payload in reality), we force the views.use_card_view file to identify the corresponding information. Our goal is to, as "Salty Customer" (no pun intended), to attack the Tuition Card system by finding the administrator account and its paired password. The union operation included within our attack will pull the "admin" user password and place it within our table, thus revealing information regarding the LegacySite's database. To fix this issue, we replaced the problem code ("card_query = ard.objects.raw('select id from LegacySite_card where data = \'%s\'' % signature)") and changed object.raw to object filter, as well as the last bit regarding the signature. We used a encoded signature, which should allow safe retrieving of values and filtering (detection and blocking) of SQL attacks.
+
+
+#Attack 4. One attack that exploits another attack not listed above on the server. Some hints for this section are: looking at the way the passwords are stored, and looking at how interactions are done with the giftcardreader binary.
+
+Bug: One word/abbreviation: HTTP
+
+Description: The goal of this attack is to leverage the natural vulnerabilities present in HTTP. As said in many security classes and commonly known in the security world, HTTP is a vulnerable protocol, as it does not utilize TLS (SSL) to encrypt HTTP(S) GET requests and responses (https://www.cloudflare.com/learning/ssl/why-is-http-not-secure/#:~:text=The%20only%20difference%20between%20the,uses%20HTTPS%20has%20https%3A%2F%2F). The main differences between HTTP and HTTPS are well documented, and any of a number of attacks can affect the HTTP django server currently in place for the giftcard website. Attacks include BGP and DNS hijacking, domain spoofing,  and kinds of man-in-the-middle (MITM) attacks. The easy fix for this is to implement some form of server that utilizes HTTPS. Without an HTTPS fix, an attacker could utilzie all forms of vulnerabilities present in HTTP. In our program we utilize a SSL server, run using runsslserver. We can check that HTTPS is implemented by examining the url of the web app (https://127.0.0.1:8000).
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,5 @@
+django
+cryptography 
+django-sslserver
+django-cryptography
+django-environ

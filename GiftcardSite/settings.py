@@ -13,20 +13,34 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import base64
 
+#KZ: Need to import this element in order to implement certain database changes, and to protect the secret key
+import environ
+env = environ.Env(
+    DEBUG=(bool, False)	
+)
+#KZ: This is used whenever reading a .env file	
+environ.Env.read_env()
+
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'kmgysa#fz+9(z1*=c0ydrjizk*7sthm2ga1z4=^61$cxcq8b$l'
+
+#KZ: Must keep this a secret. Here we are commenting it out, but in reality we would delete it!.
+#SECRET_KEY = 'kmgysa#fz+9(z1*=c0ydrjizk*7sthm2ga1z4=^61$cxcq8b$l'
+
+#KZ: Implementing a secure Secret Key with environ
+SECRET_KEY = env('SECRET_KEY')
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -39,6 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Custom
+#KZ: So tha we can implement the fix for Attack #4
+    'sslserver'
     'LegacySite',
 ]
 
@@ -71,10 +87,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'GiftcardSite.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -85,7 +99,6 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -104,27 +117,19 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 # Static Images:
-
 IMAGE_ROOT = os.path.join(BASE_DIR, 'images')
 
 # JS Root.
-
 JS_ROOT = os.path.join(BASE_DIR, "templates/js")
 
 # CSS Root
-
 CSS_ROOT = os.path.join(BASE_DIR, "templates/css")
 
 # Font Root
