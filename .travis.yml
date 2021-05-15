@@ -18,8 +18,10 @@ script:
   - python manage.py makemigrations
   - python manage.py migrate
   - sh import_dbs.sh
-#  - python manage.py test GiftcardSite
-
+#  - python manage.py 1XSStest GiftcardSite
+#  - python manage.py 2CSRFtest GiftcardSite
+#  - python manage.py 3SQLtest GiftcardSite
+#  - python manage.py 4HTTPtest GiftcardSite
 
 after_script:
   - travis_terminate 0
